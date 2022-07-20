@@ -1,0 +1,138 @@
+---
+title: "MatrixQCvisUtils: utility functions for MatrixQCvis"
+author:
+ - name: Thomas Naake
+   mail: thomas.naake@embl.de, thomasnaake@googlemail.com
+   affiliation: European Molecular Biology Laboratory, Meyerhofstrasse 1, 69117 Heidelberg
+package: MatrixQCvisUtils
+      
+output:  
+    BiocStyle::html_document:
+        toc_float: true
+bibliography: MatrixQCvisUtils-citations.bib
+vignette: >
+    %\VignetteIndexEntry{Utility functions for MatrixQCvis}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteKeywords{Mass Spectrometry, MS, Metabolomics, Proteomics, Transcriptomics, Visualization, QC}
+    %\VignettePackage{MatrixQCvis-vignette}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+```{r env, include=FALSE, echo=FALSE, cache=FALSE}
+library("knitr")
+opts_chunk$set(stop_on_error = 1L)
+suppressPackageStartupMessages(library("MatrixQCvisUtils"))
+```
+
+# Introduction {#sec-intro}
+
+Data quality assessment is an integral part of preparatory data analysis 
+to ensure sound biological information retrieval. 
+We present here the `MatrixQCvisUtils` package, which provides 
+functions to create 
+
+The `SummarizedExperiment` objects can be seamlessly used in the 
+`MatrixQCvis` package, that provides shiny-based interactive visualization of 
+data quality metrics at the per-sample and 
+per-feature level. 
+
+# Questions and bugs {-}
+
+`MatrixQCvisUtils` is currently under active development. If you discover any 
+bugs, typos or develop ideas of improving `MatrixQCvisUtils` feel free to 
+raise an issue via [GitHub](https://github.com/tnaake/MatrixQCvisUtils) or
+send a mail to the developer.
+
+# Prepare the environment and load the data {#sec-prepare}
+To install `MatrixQCvisUtils` enter the following to the `R` console
+
+```{r install, eval=FALSE}
+if (!requireNamespace("devtools", quietly = TRUE))
+    install.packages("devtools")
+devtools::install_github("tnaake/MatrixQCvisUtils")
+```
+
+Before starting with the analysis, load the `MatrixQCvisUtils` package.
+
+```{r load_MatrixQCvisUtils, eval=TRUE}
+library(MatrixQCvisUtils)
+``` 
+
+# Load files and convert to a `SummarizedExperiment` object
+
+The functions in `MatrixQCvisUtils` convert the output files of the following
+workflows into a `SummarizedExperiment`:
+
+ - Biocrates/MetIDQ output in xlsx format,
+ - MaxQuant output in xlsx or txt format, and
+ - Spectronaut output in xlsx format.
+
+The functions `biocrates`, `maxQuant`, or `spectronaut` will create
+`MatrixQCvis::shinyQC` compatible `SummarizedExperiment` objects, with the
+following properties:
+ - `rownames(se)` are set to the feature names derived from the respective
+   cells in the input files,
+ - `colnames(se)` are set to the sample names derived from the respective
+   cells in the input files,
+ - `colnames(se)`, `colnames(assay(se))` and `rownames(colData(se))` are 
+   identical.
+
+Objects belonging to the `SummarizedExperiment` class are containers for one 
+or more assays, which are (numerical) matrices containing the quantitative, 
+measured information of the experiment. The rows represent features of 
+interest (e.g. transcripts, peptides, proteins, or metabolites) and the 
+columns represent the samples. The `SummarizedExperiment` object stores 
+also information on the features of interest (accessible by `rowData`) and 
+information on the samples (accessible by `colData`). The name of samples and 
+features will be accessed from `colnames(se)` and `rownames(se)`, respectively.
+
+## Conversion from Biocrates files
+
+```{r biocrates, eval=FALSE}
+file <- "path/to/biocrates/object"
+biocrates(file = file, sheet = 1)
+```
+
+## Conversion from MaxQuant files
+
+```{r maxQuant, eval=FALSE}
+## from txt files and iBAQ-normalized intensities
+file <- "path/to/maxQuant/object.txt"
+maxQuant(file = file, intensity = "iBAQ", type = "txt")
+
+## from txt files and LFQ-normalized intensities
+file <- "path/to/maxQuant/object.txt"
+maxQuant(file = file, intensity = "LFQ", type = "txt")
+
+## from xlsx files and iBAQ-normalized intensities
+file <- "path/to/maxQuant/object.xslx"
+maxQuant(file = file, intensity = "iBAQ", type = "xlsx")
+
+## from xlsx files and LFQ-normalized intensities
+file <- "path/to/maxQuant/object.xlsx"
+maxQuant(file = file, intensity = "LFQ", type = "xlsx")
+```
+
+## Conversion from Spectronaut files
+
+```{r spectronaut, eval=FALSE}
+file <- "path/to/spectronaut/object"
+spectronaut(file = file, sheetIntensitities = 1, sheetAnnotation = 2)
+```
+
+# Appendix {-}
+
+## Session information {-}
+
+All software and respective versions to build this vignette are listed here:
+
+```{r session,eval=TRUE, echo=FALSE}
+sessionInfo()
+```
+
+## References
+
