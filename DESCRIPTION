@@ -1,7 +1,7 @@
 Package: MatrixQCvisUtils
 Type: Package
 Title: Utility functions for MatrixQCvis package
-Version: 0.99.9
+Version: 0.99.99
 Date: 2022-07-20
 Authors@R: c(person("Thomas", "Naake", role = c("aut", "cre"), 
 		email = "thomasnaake@googlemail.com",
