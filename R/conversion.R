@@ -142,69 +142,78 @@ maxQuant <- function(file, intensity = c("iBAQ", "LFQ"), sheet,
     ## remove the column that only contains "intensity"
     inds_samp <- inds_samp[cols_samp != intensity]
     cols_samp <- cols_samp[cols_samp != intensity]
-
+    
+    ## make all characters lower-case for colnames(.f) to grep small differences
+    ## in orthography of colnames
+    .cols <- tolower(cols)
+    .f <- f
+    colnames(.f) <- .cols
+    
     ## create rowData
-    rD <- data.frame(feature = rownames(f))
-    if ("Best.MS.MS" %in% cols) rD$Best_MS_MS <- f[, "Best.MS.MS"]
-    if ("Charges" %in% cols) rD$Charges <- f[, "Charges"]
-    if ("Count" %in% cols) rD$Count <- f[, "Count"]
-    if ("Evidence.IDs" %in% cols)
-        rD$Evidence_IDs <- f[, "Evidence.IDs"]
-    if ("Fasta.headers" %in% cols) rD$Fasta_header <- f[, "Fasta.headers"]
-    if ("Gene.names" %in% cols) rD$Gene_name <- f[, "Gene.names"]
-    if ("id" %in% cols) rD$id <- f[, "id"]
-    if ("Length" %in% cols) rD$Length <- f[, "Length"]
-    if ("Majority.protein.IDs" %in% cols)
-        rD$Majority_protein_ids <- f[, "Majority.protein.IDs"]
-    if ("Mass" %in% cols) rD$Mass <- f[, "Mass"]
-    if ("Missed.cleavages" %in% cols) 
-        rD$Missed_cleavages <- f[, "Missed.cleavages"]
-    if ("Mod..peptide.IDs" %in% cols)
-        rD$Mod_peptide_IDs <- f[, "Mod..peptide.IDs"]
-    if ("Mol..weight..kDa." %in% cols)
-        rD$Mol_weight_kDa <- f[, "Mol..weight..kDa."]
-    if ("MS.MS.IDs" %in% cols) rD$MS_MS_IDs <- f[, "MS.MS.IDs"]
-    if ("Number.of.proteins" %in% cols) 
-        rD$Number_of_proteins <- f[, "Number.of.proteins"]
-    if ("Only.identified.by.site" %in% cols)
-        rD$Only_identified_by_site <- f[, "Only.identified.by.site"]
-    if ("Oxidation..M..site.IDs" %in% cols)
-        rD$Oxidation_M_site_IDs <- f[, "Oxidation..M..site.IDs"]
-    if ("Oxidation..M..site.positions" %in% cols)
-        rD$Oxidation_M_site_positions <- f[, "Oxidation..M..site.positions"]
-    if ("Peptide.counts..all." %in% cols)
-        rD$Peptide_counts_all <- f[, "Peptide.counts..all."]
-    if ("Peptide.counts..razor.unique." %in% cols)
-        rD$Peptide_counts_razor_unique <- f[, "Peptide.counts..razor.unique."]
-    if ("Peptide.counts..unique." %in% cols)
-        rD$Peptide_counts_unique <- f[, "Peptide.counts..unique."]
-    if ("Peptides"  %in% cols) rD$Peptides <- f[, "Peptides"]
-    if ("Peptide.IDs" %in% cols) rD$Peptide_IDs <- f[, "Peptide.IDs"]
-    if ("Peptide.is.razor" %in% cols)
-        rD$Peptide_is_razor <- f[, "Peptide.is.razor"]
-    if ("Potential.contaminant" %in% cols)
-        rD$Potential_contaminant <- f[, "Potential.contaminant"]
-    if ("Protein.names" %in% cols) rD$Protein_names <- f[, "Protein.names"]
-    if ("Proteins" %in% cols) rD$Proteins <- f[, "Proteins"]
-    if ("Q.value" %in% cols) rD$Q_value <- f[, "Q.value"]
-    if ("Razor...unique.peptides" %in% cols)
-        rD$Razor_unique_peptides <- f[, "Razor...unique.peptides"]
-    if ("Reverse" %in% cols) rD$Reverse <- f[, "Reverse"]
-    if ("Sequence" %in% cols) rD$Sequence <- f[, "Sequence"]
-    if ("Sequence.coverage...." %in% cols)
-        rD$Sequence_coverage <- f[, "Sequence.coverage...."]
-    if ("Sequence.length" %in% cols)
-        rD$Sequence_length <- f[, "Sequence.length"]
-    if ("Sequence.lengths" %in% cols)
-        rD$Sequence_lengths <- f[, "Sequence.lengths"]
-    if ("Unique.peptides" %in% cols) 
-        rD$Unique_peptides <- f[, "Unique.peptides"]
-    if ("Unique..Proteins." %in% cols) 
-        rD$Unique_Proteins <- f[, "Unique..Proteins."]
-    if ("Unique...razor.sequence.coverage...." %in% cols)
-        rD$Unique_razor_sequence_coverage <- f[, "Unique...razor.sequence.coverage...."]
-    if ("Unique.sequence.coverage...." %in% cols)
-        rD$Unique_sequence_coverage <- f[, "Unique.sequence.coverage...."]
+    rD <- data.frame(feature = rownames(.f))
+    if ("best.ms.ms" %in% .cols) rD$best_MS_MS <- .f[, "best.ms.ms"]
+    if ("charges" %in% .cols) rD$charges <- .f[, "charges"]
+    if ("count" %in% .cols) rD$count <- .f[, "count"]
+    if ("evidence.ids" %in% .cols)
+        rD$evidence_ids <- .f[, "evidence.ids"]
+    if ("fasta.headers" %in% .cols) rD$fasta_header <- .f[, "fasta.headers"]
+    if ("genes" %in% .cols) rD$genes <- .f[, "genes"]
+    if ("gene.names" %in% .cols) rD$gene_name <- .f[, "gene.names"]
+    if ("id" %in% .cols) rD$id <- .f[, "id"]
+    if ("length" %in% .cols) rD$length <- .f[, "length"]
+    if ("majority.protein.ids" %in% .cols)
+        rD$majority_protein_ids <- .f[, "majority.protein.ids"]
+    if ("mass" %in% .cols) rD$mass <- .f[, "mass"]
+    if ("missed.cleavages" %in% .cols) 
+        rD$missed_cleavages <- .f[, "missed.cleavages"]
+    if ("mod..peptide.ids" %in% .cols)
+        rD$mod_peptide_ids <- .f[, "mod..peptide.ids"]
+    if ("mol..weight..kda." %in% .cols)
+        rD$mol_weight_kDa <- .f[, "mol..weight..kda."]
+    if ("ms.ms.ids" %in% .cols) rD$ms_ms_ids <- .f[, "ms.ms.ids"]
+    if ("number.of.proteins" %in% .cols) 
+        rD$number_of_proteins <- .f[, "number.of.proteins"]
+    if ("only.identified.by.site" %in% .cols)
+        rD$only_identified_by_site <- .f[, "only.identified.by.site"]
+    if ("oxidation..m..site.ids" %in% .cols)
+        rD$oxidation_m_site_ids <- .f[, "oxidation..m..site.ids"]
+    if ("oxidation..m..site.positions" %in% .cols)
+        rD$oxidation_m_site_positions <- .f[, "oxidation..m..site.positions"]
+    if ("peptide.counts..all." %in% .cols)
+        rD$peptide_counts_all <- .f[, "peptide.counts..all."]
+    if ("peptide.counts..razor.unique." %in% .cols)
+        rD$peptide_counts_razor_unique <- .f[, "peptide.counts..razor.unique."]
+    if ("peptide.counts..unique." %in% .cols)
+        rD$peptide_counts_unique <- .f[, "peptide.counts..unique."]
+    if ("peptides"  %in% .cols) rD$peptides <- .f[, "peptides"]
+    if ("peptide.ids" %in% .cols) rD$peptide_ids <- .f[, "peptide.ids"]
+    if ("peptide.is.razor" %in% .cols)
+        rD$peptide_is_razor <- .f[, "peptide.is.razor"]
+    if ("potential.contaminant" %in% .cols)
+        rD$potential_contaminant <- .f[, "potential.contaminant"]
+    if ("protein.group" %in% .cols) rD$protein_group <- .f[, "protein.group"]
+    if ("protein.ids" %in% .cols) rD$protein_ids <- .f[, "protein.ids"]
+    if ("protein.names" %in% .cols) rD$protein_names <- .f[, "protein.names"]
+    if ("proteins" %in% .cols) rD$proteins <- .f[, "proteins"]
+    if ("q.value" %in% .cols) rD$q_value <- .f[, "q.value"]
+    if ("razor...unique.peptides" %in% .cols)
+        rD$razor_unique_peptides <- .f[, "razor...unique.peptides"]
+    if ("reverse" %in% .cols) rD$reverse <- .f[, "reverse"]
+    if ("sequence" %in% .cols) rD$sequence <- .f[, "sequence"]
+    if ("sequence.coverage...." %in% .cols)
+        rD$sequence_coverage <- .f[, "sequence.coverage...."]
+    if ("sequence.length" %in% .cols)
+        rD$sequence_length <- .f[, "sequence.length"]
+    if ("sequence.lengths" %in% .cols)
+        rD$sequence_lengths <- .f[, "sequence.lengths"]
+    if ("unique.peptides" %in% .cols) 
+        rD$unique_peptides <- .f[, "unique.peptides"]
+    if ("unique..proteins." %in% .cols) 
+        rD$unique_proteins <- .f[, "unique..proteins."]
+    if ("unique...razor.sequence.coverage...." %in% .cols)
+        rD$unique_razor_sequence_coverage <- .f[, "unique...razor.sequence.coverage...."]
+    if ("unique.sequence.coverage...." %in% .cols)
+        rD$unique_sequence_coverage <- .f[, "unique.sequence.coverage...."]
     rownames(rD) <- rD[["feature"]]
 
     ## create colData
