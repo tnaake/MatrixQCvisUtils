@@ -57,14 +57,22 @@ biocrates <- function(file, sheet, ...) {
     rownames(rD) <- rD[["feature"]]
     
     ## find the rows that contain the samples
+    ## find from the back the first FALSE entry, set all following TRUEs to FALSE
     inds_name <- !is.na(xls[, 1])
+    inds_name <- inds_name[length(inds_name):1]
+    first_false <- which(!inds_name)[1]
+    if (length(first_false) == 1)
+        inds_name[which(!inds_name)[1]:length(inds_name)] <- FALSE
+    inds_name <- inds_name[length(inds_name):1]
     
     ## create colData
     ## rename column "Sample Identification" to "name" and move to the beginning
     ## of cD
     cD <- xls[inds_name, seq_len(min(which(inds_met)) - 1)]
-    cD <- data.frame(name = cD[, "Sample.Identification"], cD)
-    cD <- dplyr::select(cD, -c("Sample.Identification"))
+    cD_tmp <- cD
+    colnames(cD_tmp) <- tolower(colnames(cD_tmp))
+    cD <- data.frame(name = cD_tmp[, "sample.identification"], cD)
+    ##cD <- dplyr::select(cD)
     rownames(cD) <- cD[["name"]]
     
     ## create assay, set values of 0 to NA
