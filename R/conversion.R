@@ -72,7 +72,6 @@ biocrates <- function(file, sheet, ...) {
     cD_tmp <- cD
     colnames(cD_tmp) <- tolower(colnames(cD_tmp))
     cD <- data.frame(name = cD_tmp[, "sample.identification"], cD)
-    ##cD <- dplyr::select(cD)
     rownames(cD) <- cD[["name"]]
     
     ## create assay, set values of 0 to NA
