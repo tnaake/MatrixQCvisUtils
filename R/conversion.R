@@ -82,28 +82,32 @@ biocrates <- function(file, sheet, ...) {
 
 #' @name maxQuant
 #' 
-#' @title Convert MaxQuant xlsx or txt output to \code{SummarizedExperiment} object
+#' @title Convert MaxQuant txt, tsv, or xlsx output to 
+#' \code{SummarizedExperiment} object
 #' 
 #' @description 
 #' The function \code{maxQuant} will create a \code{SummarizedExperiment} from a
-#' MaxQuant xlsx or txt file. 
-#' The function \code{maxQuant} takes as input the path to a .xlsx or .txt file 
-#' (MaxQuant output) and additional parameters given to the \code{read.xlsx} 
-#' function from the \code{openxlsx} package (e.g. specifying the sheet name 
-#' or index by \code{sheet}).
+#' MaxQuant tsv, txt, or xlsx file. 
+#' The function \code{maxQuant} takes as input the path to a .tsv, .txt, or 
+#' .xlsx file (MaxQuant output) and additional parameters given to the 
+#' \code{read.xlsx} function from the \code{openxlsx} package (e.g. 
+#' specifying the sheet name or index by \code{sheet}).
 #' 
 #' @details 
 #' The argument \code{intensity} will specify if the \code{iBAQ} or 
-#' \code{LFQ} values are taken. 
+#' \code{LFQ} values are taken. If \code{intensity} is set to \code{"none"}, 
+#' heuristics are run that select the sample columns based on expected 
+#' metadata columns. In the latter case, data upload may lead to insufficient
+#' results.
 #' 
-#' The argument \code{type} will specify if the data is loaded from \code{txt} 
-#' or \code{xlsx} files.
+#' The argument \code{type} will specify if the data is loaded from 
+#' \code{tsv}, \code{txt}, or \code{xlsx} files.
 #'  
 #' @param file \code{character}
 #' @param intensity \code{character}, either \code{"iBAQ"} or \code{"LFQ"}
 #' @param sheet \code{character} or \code{numeric}, the name or index of the 
 #' sheet to read data from
-#' @param type \code{character}, either \code{"txt"} or \code{"xlsx"}
+#' @param type \code{character}, either \code{"tsv"},  \code{"txt"}, or \code{"xlsx"}
 #' @param ... additional parameters given to \code{read.xlsx} (for 
 #' \code{type = "xlsx"})
 #'
@@ -119,15 +123,15 @@ biocrates <- function(file, sheet, ...) {
 #' @importFrom openxlsx read.xlsx
 #' @importFrom utils read.table
 #' @importFrom SummarizedExperiment SummarizedExperiment
-maxQuant <- function(file, intensity = c("iBAQ", "LFQ"), sheet, 
-    type = c("txt", "xlsx"), ...) {
+maxQuant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet, 
+    type = c("tsv", "txt", "xlsx"), ...) {
     
     intensity <- match.arg(intensity)
     type <- match.arg(type)
     
     if (type == "xlsx")
         f <- openxlsx::read.xlsx(file, sheet = sheet, ...)
-    if (type == "txt")
+    if (type %in% c("txt", "tsv"))
         f <- utils::read.table(file, sep = "\t", dec = ".", header = TRUE)
     
     ## names of proteins is in the first col, assign and remove the first col
@@ -136,18 +140,41 @@ maxQuant <- function(file, intensity = c("iBAQ", "LFQ"), sheet,
     
     ## find the columns that contain the features
     cols <- colnames(f)
-    inds_samp <- grep(pattern = intensity, cols)
-    cols_samp <- cols[inds_samp]
-
-    ## remove the column that only contains "intensity"
-    inds_samp <- inds_samp[cols_samp != intensity]
-    cols_samp <- cols_samp[cols_samp != intensity]
     
     ## make all characters lower-case for colnames(.f) to grep small differences
     ## in orthography of colnames
     .cols <- tolower(cols)
     .f <- f
     colnames(.f) <- .cols
+    
+    if (intensity %in% c("iBAQ", "LFQ")) {
+        
+        inds_samp <- grep(pattern = intensity, cols)
+        cols_samp <- cols[inds_samp]
+        
+        ## remove the column that only contains "intensity"
+        inds_samp <- inds_samp[cols_samp != intensity]
+        cols_samp <- cols_samp[cols_samp != intensity]    
+    } 
+    if (intensity == "none") {
+        cols_rD <- c("best.ms.ms", "charges", "count", "evidence.ids",
+            "fasta.headers", "first.protein.description", "genes", "gene.names", 
+            "id", "length", "majority.protein.ids", "mass", "missed.cleavages",
+            "mod..peptide.ids", "mol..weight..kda.", "ms.ms.ids",
+            "number.of.proteins", "only.identified.by.site", 
+            "oxidation..m..site.ids", "oxidation..m..site.positions",
+            "peptide.counts..all.", "peptide.counts..razor.unique.", 
+            "peptide.counts..unique.", "peptides", "peptide.ids",
+            "peptide.is.razor", "potential.contaminant", "protein.group",
+            "protein.ids", "protein.names", "proteins", "q.value", 
+            "razor...unique.peptides", "reverse", "sequence", 
+            "sequence.coverage....", "sequence.length", "sequence.lengths", 
+            "unique.peptides", "unique..proteins.", 
+            "unique...razor.sequence.coverage....", 
+            "unique.sequence.coverage....")
+        inds_samp <- which(!.cols %in% cols_rD)
+        cols_samp <- cols[inds_samp]
+    }
     
     ## create rowData
     rD <- data.frame(feature = rownames(.f))
@@ -157,6 +184,8 @@ maxQuant <- function(file, intensity = c("iBAQ", "LFQ"), sheet,
     if ("evidence.ids" %in% .cols)
         rD$evidence_ids <- .f[, "evidence.ids"]
     if ("fasta.headers" %in% .cols) rD$fasta_header <- .f[, "fasta.headers"]
+    if ("first.protein.description" %in% .cols) 
+        rD$first_protein_description <- .f[, "first.protein.description"]
     if ("genes" %in% .cols) rD$genes <- .f[, "genes"]
     if ("gene.names" %in% .cols) rD$gene_name <- .f[, "gene.names"]
     if ("id" %in% .cols) rD$id <- .f[, "id"]
