@@ -2,13 +2,14 @@
 % Please edit documentation in R/conversion.R
 \name{maxQuant}
 \alias{maxQuant}
-\title{Convert MaxQuant xlsx or txt output to \code{SummarizedExperiment} object}
+\title{Convert MaxQuant txt, tsv, or xlsx output to 
+\code{SummarizedExperiment} object}
 \usage{
 maxQuant(
   file,
-  intensity = c("iBAQ", "LFQ"),
+  intensity = c("iBAQ", "LFQ", "none"),
   sheet,
-  type = c("txt", "xlsx"),
+  type = c("tsv", "txt", "xlsx"),
   ...
 )
 }
@@ -20,28 +21,32 @@ maxQuant(
 \item{sheet}{\code{character} or \code{numeric}, the name or index of the 
 sheet to read data from}
 
-\item{type}{\code{character}, either \code{"txt"} or \code{"xlsx"}}
+\item{type}{\code{character}, either \code{"tsv"},  \code{"txt"}, or \code{"xlsx"}}
 
 \item{...}{additional parameters given to \code{read.xlsx} (for 
-\code{type = "xlsx"})}
+\code{type = "xlsx"}) or \code{read.table}
+(for \code{type = "tsv"}/\code{type = "txt"})}
 }
 \value{
 \code{SummarizedExperiment} object
 }
 \description{
 The function \code{maxQuant} will create a \code{SummarizedExperiment} from a
-MaxQuant xlsx or txt file. 
-The function \code{maxQuant} takes as input the path to a .xlsx or .txt file 
-(MaxQuant output) and additional parameters given to the \code{read.xlsx} 
-function from the \code{openxlsx} package (e.g. specifying the sheet name 
-or index by \code{sheet}).
+MaxQuant tsv, txt, or xlsx file. 
+The function \code{maxQuant} takes as input the path to a .tsv, .txt, or 
+.xlsx file (MaxQuant output) and additional parameters given to the 
+\code{read.xlsx} function from the \code{openxlsx} package (e.g. 
+specifying the sheet name or index by \code{sheet}).
 }
 \details{
 The argument \code{intensity} will specify if the \code{iBAQ} or 
-\code{LFQ} values are taken. 
+\code{LFQ} values are taken. If \code{intensity} is set to \code{"none"}, 
+heuristics are run that select the sample columns based on expected 
+metadata columns. In the latter case, data upload may lead to insufficient
+results.
 
-The argument \code{type} will specify if the data is loaded from \code{txt} 
-or \code{xlsx} files.
+The argument \code{type} will specify if the data is loaded from 
+\code{tsv}, \code{txt}, or \code{xlsx} files.
 }
 \examples{
 file <- "path/to/maxQuant/object.txt"

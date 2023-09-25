@@ -116,7 +116,8 @@ biocrates <- function(file, sheet, ...) {
 #' sheet to read data from
 #' @param type \code{character}, either \code{"tsv"},  \code{"txt"}, or \code{"xlsx"}
 #' @param ... additional parameters given to \code{read.xlsx} (for 
-#' \code{type = "xlsx"})
+#' \code{type = "xlsx"}) or \code{read.table}
+#' (for \code{type = "tsv"}/\code{type = "txt"}) 
 #'
 #' @examples
 #' file <- "path/to/maxQuant/object.txt"
@@ -139,7 +140,7 @@ maxQuant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
     if (type == "xlsx")
         f <- openxlsx::read.xlsx(file, sheet = sheet, ...)
     if (type %in% c("txt", "tsv"))
-        f <- utils::read.table(file, sep = "\t", dec = ".", header = TRUE)
+        f <- utils::read.table(file, sep = "\t", dec = ".", header = TRUE, ...)
     
     ## names of proteins is in the first col, assign and remove the first col
     rownames(f) <- f[, 1]
