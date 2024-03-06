@@ -37,12 +37,22 @@ biocrates <- function(file, sheet, ...) {
     
     xls <- openxlsx::read.xlsx(file, sheet = sheet, ...)
     
-    ## colnames is in the first row, assign and remove the first row
-    colnames(xls) <- make.names(xls[1, ])
+    ## colnames is in the first row, assign to colnames attribute 
+    ## and remove the first row
+    colnames(xls) <- xls[1, ]
     xls <- xls[-1, ]
     
-    ## take the columns until Choline
-    xls <- xls[, seq(1, which(colnames(xls) == "Choline"))]
+    ## remove columns that are NA
+    xls <- xls[, !is.na(colnames(xls))]
+    
+    ## check if Choline is the last column (this is typically the case)
+    if (ncol(xls) != which(colnames(xls) == "Choline")) {
+        warning("Please check 'file': Column 'Choline' is not the last column in 'file' as expected.")
+        print("I expect that there are feature columns containing intensities beyond the column 'Choline'.")
+        print("I will select all columns until the last column and continue.")
+    }
+    ## unncessesary step but keep it for clarity
+    xls <- xls[, seq(1, ncol(xls))]
     
     ## find the columns that contain the metabolites, row 1 contains class,
     ## row 2 contains LOD (row 1 and 2 is NA for columns not containing the 
@@ -50,11 +60,6 @@ biocrates <- function(file, sheet, ...) {
     inds_met <- !is.na(xls[1, ])
     ## set the first TRUE value to FALSE since it contains the label of the row
     inds_met[which(inds_met)[1]] <- FALSE
-    
-    ## create rowData 
-    rD <- data.frame(feature = colnames(xls)[inds_met], 
-                class = as.character(xls[1, inds_met]))
-    rownames(rD) <- rD[["feature"]]
     
     ## find the rows that contain the samples
     ## find from the back the first FALSE entry, set all following TRUEs to FALSE
@@ -65,9 +70,26 @@ biocrates <- function(file, sheet, ...) {
         inds_name[which(!inds_name)[1]:length(inds_name)] <- FALSE
     inds_name <- inds_name[length(inds_name):1]
     
+    ## combine all HMDB ids into a character string for each feature
+    inds_name_hmdb <- !inds_name
+    inds_name_hmdb[1] <- FALSE
+    hmdb <- apply(xls[inds_name_hmdb, inds_met], 2, function(cols_i) {
+        cols_i_hmdb <- grep(cols_i, pattern = "HMDB", value = TRUE)
+        paste(cols_i_hmdb, collapse = ", ")
+    })
+    
+    ## create rowData 
+    rD <- data.frame(feature = make.names(colnames(xls)[inds_met]), 
+        biocrates_names = colnames(xls)[inds_met],
+        class = as.character(xls[1, inds_met]),
+        HMDB_ids = hmdb)
+    rownames(rD) <- rD[["feature"]]
+    
     ## create colData
     ## rename column "Sample Identification" to "name" and move to the beginning
     ## of cD
+    colnames(xls) <- colnames(xls) |>
+        make.names()
     cD <- xls[inds_name, seq_len(min(which(inds_met)) - 1)]
     cD_tmp <- cD
     colnames(cD_tmp) <- tolower(colnames(cD_tmp))
