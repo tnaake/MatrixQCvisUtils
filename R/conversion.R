@@ -163,26 +163,27 @@ metaboscape <- function(file, sheet, ...) {
     
     ## make all characters lower-case for colnames(.f) to grep small differences
     ## in orthography of colnames
-    .cols <- tolower(cols)
+    .cols <- tolower(cols) |>
+        make.names()
     .xls <- xls
     colnames(.xls) <- .cols
     
-    cols_rD <- c("rt [min]", "ccs (å²)", "δccs [%]", "m/z meas,", "m meas,",
-        "ions", "ms/ms", "qc rsd [%]")
+    cols_rD <- c("rt..min.", "ccs..å..", "δccs....", "m.z.meas.", 
+        "m.meas.", "ions", "ms.ms", "qc.rsd....")
     inds_samp <- which(!.cols %in% cols_rD)
     cols_samp <- cols[inds_samp]
     
     
     ## create rowData
     rD <- data.frame(feature = paste("feature", rownames(.xls), sep = "_"))
-    if ("rt [min]" %in% .cols) rD$rt_min <- .xls[, "rt [min]"]
-    if ("ccs (å²)"  %in% .cols) rD$ccs_a2 <- .xls[, "ccs (å²)"]
-    if ("δccs [%]"  %in% .cols) rD$deltaccs_percent <- .xls[, "δccs [%]"]
-    if ("m/z meas,"  %in% .cols) rD$mz <- .xls[, "m/z meas,"]
-    if ("m meas,"  %in% .cols) rD$molecular_mass <- .xls[, "m meas,"]
+    if ("rt..min." %in% .cols) rD$rt_min <- .xls[, "rt..min."]
+    if ("ccs..å.." %in% .cols) rD$ccs_a2 <- .xls[, "ccs..å.."]
+    if ("δccs...."  %in% .cols) rD$deltaccs_percent <- .xls[, "δccs...."]
+    if ("m.z.meas."  %in% .cols) rD$mz <- .xls[, "m.z.meas."]
+    if ("m.meas."  %in% .cols) rD$molecular_mass <- .xls[, "m.meas."]
     if ("ions"  %in% .cols) rD$ions <- .xls[, "ions"]
-    if ("ms/ms"  %in% .cols) rD$msms <- .xls[, "ms/ms"]
-    if ("qc rsd [%]"  %in% .cols) rD$qc_rsd_percent <- .xls[, "qc rsd [%]"]
+    if ("ms.ms"  %in% .cols) rD$msms <- .xls[, "ms.ms"]
+    if ("qc.rsd...."  %in% .cols) rD$qc_rsd_percent <- .xls[, "qc.rsd...."]
     rownames(rD) <- rD[["feature"]]
     
     ## create colData

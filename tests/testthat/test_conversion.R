@@ -30,7 +30,7 @@ test_that("maxquant", {
 ## function diann
 test_that("diann", {
     expect_is(diann, "function")
-    expect_error(diann(file = ""), "File does not exist")
+    expect_error(diann(file = ""), "no lines available")
 })
 
 ## function spectronaut
