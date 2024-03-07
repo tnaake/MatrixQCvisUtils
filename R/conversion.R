@@ -80,7 +80,7 @@ biocrates <- function(file, sheet, ...) {
     
     ## create rowData 
     rD <- data.frame(feature = make.names(colnames(xls)[inds_met]), 
-        biocrates_names = colnames(xls)[inds_met],
+        feature_original = colnames(xls)[inds_met],
         class = as.character(xls[1, inds_met]),
         HMDB_ids = hmdb)
     rownames(rD) <- rD[["feature"]]
@@ -88,12 +88,14 @@ biocrates <- function(file, sheet, ...) {
     ## create colData
     ## rename column "Sample Identification" to "name" and move to the beginning
     ## of cD
+    name_original <- colnames(xls)
     colnames(xls) <- colnames(xls) |>
         make.names()
     cD <- xls[inds_name, seq_len(min(which(inds_met)) - 1)]
     cD_tmp <- cD
     colnames(cD_tmp) <- tolower(colnames(cD_tmp))
-    cD <- data.frame(name = cD_tmp[, "sample.identification"], cD)
+    cD <- data.frame(name = cD_tmp[, "sample.identification"], 
+        name_original = name_original, cD)
     rownames(cD) <- cD[["name"]]
     
     ## create assay, set values of 0 to NA
@@ -109,15 +111,107 @@ biocrates <- function(file, sheet, ...) {
 }
 
 
-#' @name maxQuant
+#' @name metaboscape
 #' 
-#' @title Convert MaxQuant txt, tsv, or xlsx output to 
-#' \code{SummarizedExperiment} object
+#' @title Convert MetaboScape xlsx output to \code{SummarizedExperiment} object
 #' 
 #' @description 
-#' The function \code{maxQuant} will create a \code{SummarizedExperiment} from a
-#' MaxQuant tsv, txt, or xlsx file. 
-#' The function \code{maxQuant} takes as input the path to a .tsv, .txt, or 
+#' The function \code{metaboscape} will create a \code{SummarizedExperiment} 
+#' from a MetaboScape xlsx file. 
+#' The function \code{metaboscape} takes as input the path to a .xlsx file 
+#' (MetaboScape output) and additional parameters given to the \code{read.xlsx} 
+#' function from the \code{openxlsx} package (e.g. specifying the sheet name or 
+#' index by \code{sheet}).
+#' 
+#' @details 
+#' Heuristics are run that select the sample columns based on expected 
+#' metadata columns. Data upload may lead to insufficient results.
+#' 
+#' @param file \code{character}
+#' @param sheet \code{character} or \code{numeric}, the name or index of the 
+#' sheet to read data from
+#' @param ... additional parameters given to \code{read.xlsx}
+#' 
+#' @examples
+#' file <- "path/to/metaboScape/object"
+#' \donttest{metaboscape(file = file, sheet = 1)}
+#' 
+#' @usage metaboscape(file, sheet, ...)
+#'
+#' @return 
+#' \code{SummarizedExperiment} object
+#' 
+#' @export
+#' 
+#' @importFrom openxlsx read.xlsx
+#' @importFrom dplyr select
+#' @importFrom SummarizedExperiment SummarizedExperiment
+metaboscape <- function(file, sheet, ...) {
+    
+    xls <- openxlsx::read.xlsx(file, sheet = sheet, colNames = FALSE, ...)
+    
+    ## find the first row of xls that contains complete observations, assume
+    ## that this row contains the header/colnames, assign colnames and 
+    ## remove preceding rows
+    nas <- apply(xls, 1, function(rows_i) sum(!is.na(rows_i)))
+    ind_colnames <- which(nas == ncol(xls))[1]
+    colnames(xls) <- xls[ind_colnames, ]
+    xls <- xls[-seq_len(ind_colnames), ]
+    
+    ## find the columns that contain the features
+    cols <- colnames(xls)
+    
+    ## make all characters lower-case for colnames(.f) to grep small differences
+    ## in orthography of colnames
+    .cols <- tolower(cols)
+    .xls <- xls
+    colnames(.xls) <- .cols
+    
+    cols_rD <- c("rt [min]", "ccs (å²)", "δccs [%]", "m/z meas,", "m meas,",
+        "ions", "ms/ms", "qc rsd [%]")
+    inds_samp <- which(!.cols %in% cols_rD)
+    cols_samp <- cols[inds_samp]
+    
+    
+    ## create rowData
+    rD <- data.frame(feature = paste("feature", rownames(.xls), sep = "_"))
+    if ("rt [min]" %in% .cols) rD$rt_min <- .xls[, "rt [min]"]
+    if ("ccs (å²)"  %in% .cols) rD$ccs_a2 <- .xls[, "ccs (å²)"]
+    if ("δccs [%]"  %in% .cols) rD$deltaccs_percent <- .xls[, "δccs [%]"]
+    if ("m/z meas,"  %in% .cols) rD$mz <- .xls[, "m/z meas,"]
+    if ("m meas,"  %in% .cols) rD$molecular_mass <- .xls[, "m meas,"]
+    if ("ions"  %in% .cols) rD$ions <- .xls[, "ions"]
+    if ("ms/ms"  %in% .cols) rD$msms <- .xls[, "ms/ms"]
+    if ("qc rsd [%]"  %in% .cols) rD$qc_rsd_percent <- .xls[, "qc rsd [%]"]
+    rownames(rD) <- rD[["feature"]]
+    
+    ## create colData
+    cD <- data.frame(name = make.names(cols_samp), name_original = cols_samp)
+    rownames(cD) <- cD[["name"]]
+    
+    ## create assay, set values of 0 to NA
+    a <- xls[, cols_samp]
+    a <- as.matrix(a)
+    mode(a) <- "numeric"
+    a[a == 0] <- NA
+    colnames(a) <- cD[["name"]]
+    rownames(a) <- rownames(rD)
+    
+    ## create SummarizedExperiment and return
+    SummarizedExperiment::SummarizedExperiment(assays = a, 
+        rowData = rD, colData = cD)
+}
+
+
+#' @name maxquant
+#'  
+#' @title Convert MaxQuant txt, tsv, or xlsx output to 
+#' \code{SummarizedExperiment} object 
+#' 
+#' @description 
+#' The function \code{maxquant} will create a \code{SummarizedExperiment} from a
+#' MaxQuant tsv, txt, or xlsx file.
+#' The function \code{maxquant} takes as input the path to a .tsv, .txt, or 
 #' .xlsx file (MaxQuant output). Additional parameters can be given to the 
 #' \code{read.xlsx} function from the \code{openxlsx} package (e.g. 
 #' specifying the sheet name or index by \code{sheet}) or the \code{read.table} 
@@ -144,8 +238,8 @@ biocrates <- function(file, sheet, ...) {
 #' (for \code{type = "tsv"}/\code{type = "txt"}) 
 #'
 #' @examples
-#' file <- "path/to/maxQuant/object.txt"
-#' \donttest{maxQuant(file = file, intensity = "iBAQ", type = "txt")}
+#' file <- "path/to/maxquant/object.txt"
+#' \donttest{maxquant(file = file, intensity = "iBAQ", type = "txt")}
 #'
 #' @return 
 #' \code{SummarizedExperiment} object
@@ -155,7 +249,7 @@ biocrates <- function(file, sheet, ...) {
 #' @importFrom openxlsx read.xlsx
 #' @importFrom utils read.table
 #' @importFrom SummarizedExperiment SummarizedExperiment
-maxQuant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet, 
+maxquant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet, 
     type = c("tsv", "txt", "xlsx"), ...) {
     
     intensity <- match.arg(intensity)
@@ -278,7 +372,7 @@ maxQuant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
     rownames(rD) <- rD[["feature"]]
 
     ## create colData
-    cD <- data.frame(name = cols_samp)
+    cD <- data.frame(name = make.names(cols_samp), name_original = cols_samp)
     name_cut <- gsub(paste0("^", intensity), "", cD$name)
     name_cut <- gsub("^[. _]", "", name_cut)
     cD$name_cut <- name_cut
@@ -316,15 +410,15 @@ maxQuant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
 #' \code{type} is set by default to \code{"tsv"}.
 #'  
 #' The function \code{diann} is a wrapper function with pre-set arguments 
-#' \code{intensity} and \code{type} of the function \code{maxQuant}. For further
-#' information see also the help page of \code{maxQuant}.
+#' \code{intensity} and \code{type} of the function \code{maxquant}. For further
+#' information see also the help page of \code{maxquant}.
 #'  
 #' @param file \code{character}
 #' @param ... additional parameters given to \code{read.table}
 #'
 #' @examples
 #' file <- "path/to/diann/object.tsv"
-#' \donttest{maxQuant(file = file)}
+#' \donttest{diann(file = file)}
 #'
 #' @return 
 #' \code{SummarizedExperiment} object
@@ -333,7 +427,7 @@ maxQuant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
 diann <- function(file, ...) {
     .type <- "tsv"
     .intensity <- "none"
-    maxQuant(file, intensity = .intensity, type = .type, quote = "", ...)
+    maxquant(file, intensity = .intensity, type = .type, quote = "", ...)
 }
 
 #' @name spectronaut
@@ -410,13 +504,15 @@ spectronaut <- function(file, sheetIntensities = 1, sheetAnnotation = 2, ...) {
 
     ## create colData
     colnames(cD)[colnames(cD) == "Sample_IDs"] <- "name"
-    cD$name <- samps
+    cD$name <- make.names(samps)
+    cD$name_original <- samps
     rownames(cD) <- cD[["name"]]
 
     ## create assay, set values of 0 to NA
     a <- as.matrix(a)
     mode(a) <- "numeric"
     a[a == 0] <- NA
+    colnames(a) <- cD[["name"]]
 
     ## create SummarizedExperiment
     SummarizedExperiment::SummarizedExperiment(assays = a, 
