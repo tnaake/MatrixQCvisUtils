@@ -118,9 +118,10 @@ biocrates <- function(file, sheet, ...) {
 #' The function \code{maxQuant} will create a \code{SummarizedExperiment} from a
 #' MaxQuant tsv, txt, or xlsx file. 
 #' The function \code{maxQuant} takes as input the path to a .tsv, .txt, or 
-#' .xlsx file (MaxQuant output) and additional parameters given to the 
+#' .xlsx file (MaxQuant output). Additional parameters can be given to the 
 #' \code{read.xlsx} function from the \code{openxlsx} package (e.g. 
-#' specifying the sheet name or index by \code{sheet}).
+#' specifying the sheet name or index by \code{sheet}) or the \code{read.table} 
+#' function from the \code{utils} (depending on the \code{type} argument) .
 #' 
 #' @details 
 #' The argument \code{intensity} will specify if the \code{iBAQ} or 
@@ -133,7 +134,8 @@ biocrates <- function(file, sheet, ...) {
 #' \code{tsv}, \code{txt}, or \code{xlsx} files.
 #'  
 #' @param file \code{character}
-#' @param intensity \code{character}, either \code{"iBAQ"} or \code{"LFQ"}
+#' @param intensity \code{character}, either \code{"iBAQ"}, \code{"LFQ"}, or 
+#' \code{"none"}
 #' @param sheet \code{character} or \code{numeric}, the name or index of the 
 #' sheet to read data from
 #' @param type \code{character}, either \code{"tsv"},  \code{"txt"}, or \code{"xlsx"}
@@ -292,6 +294,46 @@ maxQuant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
     ## create SummarizedExperiment and return
     SummarizedExperiment::SummarizedExperiment(assays = a, 
         rowData = rD, colData = cD)
+}
+
+#' @name diann
+#' 
+#' @title Convert DIA-NN tsv output to \code{SummarizedExperiment} object
+#' 
+#' @description 
+#' The function \code{diann} will create a \code{SummarizedExperiment} from a
+#' DIA-NN tsv file. 
+#' The function \code{diann} takes as input the path to a .tsv 
+#' file (DIA-NN output). Additional parameters can be given to the 
+#' \code{read.table} function from the \code{utils} package.
+#' 
+#' @details 
+#' \code{intensity} is set by default to \code{"none"}, 
+#' Heuristics are run that select the sample columns based on expected 
+#' metadata columns. Data upload may lead to insufficient
+#' results.
+#' 
+#' \code{type} is set by default to \code{"tsv"}.
+#'  
+#' The function \code{diann} is a wrapper function with pre-set arguments 
+#' \code{intensity} and \code{type} of the function \code{maxQuant}. For further
+#' information see also the help page of \code{maxQuant}.
+#'  
+#' @param file \code{character}
+#' @param ... additional parameters given to \code{read.table}
+#'
+#' @examples
+#' file <- "path/to/diann/object.tsv"
+#' \donttest{maxQuant(file = file)}
+#'
+#' @return 
+#' \code{SummarizedExperiment} object
+#'
+#' @export
+diann <- function(file, ...) {
+    .type <- "tsv"
+    .intensity <- "none"
+    maxQuant(file, intensity = .intensity, type = .type, quote = "", ...)
 }
 
 #' @name spectronaut
