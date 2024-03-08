@@ -178,15 +178,23 @@ metaboscape <- function(file, sheet, ...) {
     
     ## create rowData
     rD <- data.frame(feature = paste("feature", rownames(.xls), sep = "_"))
-    if ("rt..min." %in% .cols) rD$rt_min <- .xls[, "rt..min."]
-    if ("ccs..\u00E5.." %in% .cols) rD$ccs_a2 <- .xls[, "ccs..\u00E5.."] ## UNICODE refers to "small letter a with a ring above"
-    if ("\u03B4ccs...."  %in% .cols) rD$deltaccs_percent <- .xls[, "\u03B4ccs...."] |> ## UNICODE refers to delta
+    if ("rt..min." %in% .cols) rD$rt_min <- .xls[, "rt..min."] |>
         as.numeric()
-    if ("m.z.meas."  %in% .cols) rD$mz <- .xls[, "m.z.meas."]
-    if ("m.meas."  %in% .cols) rD$molecular_mass <- .xls[, "m.meas."]
+    ## UNICODE refers to "small letter a with a ring above"
+    if ("ccs..\u00E5.." %in% .cols) rD$ccs_a2 <- .xls[, "ccs..\u00E5.."] |>
+        as.numeric() 
+    ## UNICODE refers to delta
+    if ("\u03B4ccs...."  %in% .cols) rD$deltaccs_percent <- .xls[, "\u03B4ccs...."] |> 
+        as.numeric()
+    if ("m.z.meas."  %in% .cols) rD$mz <- .xls[, "m.z.meas."] |>
+        as.numeric()
+    if ("m.meas."  %in% .cols) rD$molecular_mass <- .xls[, "m.meas."] |>
+        as.numeric()
     if ("ions"  %in% .cols) rD$ions <- .xls[, "ions"]
-    if ("ms.ms"  %in% .cols) rD$msms <- .xls[, "ms.ms"]
-    if ("qc.rsd...."  %in% .cols) rD$qc_rsd_percent <- .xls[, "qc.rsd...."]
+    if ("ms.ms"  %in% .cols) rD$msms <- .xls[, "ms.ms"] |>
+        as.logical()
+    if ("qc.rsd...."  %in% .cols) rD$qc_rsd_percent <- .xls[, "qc.rsd...."] |>
+        as.numeric()
     rownames(rD) <- rD[["feature"]]
     
     ## create colData
