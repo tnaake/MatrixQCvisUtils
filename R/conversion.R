@@ -168,7 +168,9 @@ metaboscape <- function(file, sheet, ...) {
     .xls <- xls
     colnames(.xls) <- .cols
     
-    cols_rD <- c("rt..min.", "ccs..å..", "δccs....", "m.z.meas.", 
+    ## UNICODE \u00E5 refers to "small letter a with a ring above", 
+    ## UNICODE \u03B4 refers to delta
+    cols_rD <- c("rt..min.", "ccs..\u00E5..", "\u03B4ccs....", "m.z.meas.", 
         "m.meas.", "ions", "ms.ms", "qc.rsd....")
     inds_samp <- which(!.cols %in% cols_rD)
     cols_samp <- cols[inds_samp]
@@ -177,8 +179,9 @@ metaboscape <- function(file, sheet, ...) {
     ## create rowData
     rD <- data.frame(feature = paste("feature", rownames(.xls), sep = "_"))
     if ("rt..min." %in% .cols) rD$rt_min <- .xls[, "rt..min."]
-    if ("ccs..å.." %in% .cols) rD$ccs_a2 <- .xls[, "ccs..å.."]
-    if ("δccs...."  %in% .cols) rD$deltaccs_percent <- .xls[, "δccs...."]
+    if ("ccs..\u00E5.." %in% .cols) rD$ccs_a2 <- .xls[, "ccs..\u00E5.."] ## UNICODE refers to "small letter a with a ring above"
+    if ("\u03B4ccs...."  %in% .cols) rD$deltaccs_percent <- .xls[, "\u03B4ccs...."] |> ## UNICODE refers to delta
+        as.numeric()
     if ("m.z.meas."  %in% .cols) rD$mz <- .xls[, "m.z.meas."]
     if ("m.meas."  %in% .cols) rD$molecular_mass <- .xls[, "m.meas."]
     if ("ions"  %in% .cols) rD$ions <- .xls[, "ions"]
