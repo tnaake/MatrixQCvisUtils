@@ -1,2 +1,10 @@
-Changes in version 0.99.9 (2022-07-20)
+Changes in version 1.0.0 (2024-03-11)
++ add functions diann and metaboscape to package
++ rename maxQuant to maxquant 
++ add test files for biocrates, maxquant, spectronaut, diann, 
+  and metaboscape to package
++ update unit tests after adding test files to package
+
+
+Changes in version 0.99.99 (2022-07-20)
 + add functions biocrates, maxQuant, spectronaut to package 

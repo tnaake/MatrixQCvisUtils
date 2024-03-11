@@ -1,15 +1,16 @@
 Package: MatrixQCvisUtils
 Type: Package
 Title: Utility functions for MatrixQCvis package
-Version: 0.99.99
-Date: 2022-07-20
+Version: 1.0.0
+Date: 2024-03-11
 Authors@R: c(person("Thomas", "Naake", role = c("aut", "cre"), 
 		email = "thomasnaake@googlemail.com",
 		comment = c(ORCID = "0000-0001-7917-5580")))
 VignetteBuilder: knitr
 Description: 
 	The package entails functions to create SummarizedExperiment objects
-	from Biocrates/MetIDQ, MaxQuant, and Spectronaut output files. 
+	from Biocrates/MetIDQ, Metaboscape, MaxQuant, Spectronaut, and DIA-NN 
+	output files. 
 	The SummarizedExperiment objects can be directly utilized by the 
 	MatrixQCvis package.
 Depends:
