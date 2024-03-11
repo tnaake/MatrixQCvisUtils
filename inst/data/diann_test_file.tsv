@@ -1,0 +1,11 @@
+Protein.Group	Protein.Ids	Protein.Names	Genes	First.Protein.Description	sample_1	sample_2	sample_3	sample_4	sample_5
+protein_1	protein_1	protein_1_HUMAN	gene_1	description_1	992	2973	0	2033	1921
+protein_2	protein_2	protein_2_HUMAN	gene_2	description_2	324	297	957	326	320
+protein_3	protein_3	protein_3_HUMAN	gene_3	description_3	525	1973	972	1994	958
+protein_4	protein_4	protein_4_HUMAN	gene_4	description_4	998	1009	520	296	486
+protein_5	protein_5	protein_5_HUMAN	gene_5	description_5	0	980	0	2936	2030
+protein_6	protein_6	protein_6_HUMAN	gene_6	description_6	798	2964	3047	808	3001
+protein_7	protein_7	protein_7_HUMAN	gene_7	description_7	1017	798	781	469	1029
+protein_8	protein_8	protein_8_HUMAN	gene_8	description_8	772	2040	809	1561	774
+protein_9	protein_9	protein_9_HUMAN	gene_9	description_9	2028	0	1956	3512	1692
+protein_10	protein_10	protein_10_HUMAN	gene_10	description_10	3047	804	3066	0	0
