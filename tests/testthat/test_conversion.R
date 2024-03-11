@@ -3,7 +3,7 @@ test_that("biocrates", {
     expect_is(biocrates, "function")
     expect_error(biocrates(file = ""), "File does not exist")
     
-    file <- "data/biocrates_test_file.xlsx"
+    file <- "biocrates_test_file.xlsx"
     se <- biocrates(file = file, sheet = 1)
     cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", "sample_5",
         "sample_6", "sample_7", "sample_8", "sample_9", "sample_10")
@@ -58,7 +58,7 @@ test_that("metaboscape", {
     expect_is(metaboscape, "function")
     expect_error(metaboscape(file = ""), "File does not exist")
     
-    file <- "data/metaboscape_test_file.xlsx"
+    file <- "metaboscape_test_file.xlsx"
     se <- metaboscape(file = file, sheet = 1)
     cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", "sample_5")
     expect_equal(colnames(se), cols_samples)
@@ -110,7 +110,7 @@ test_that("maxquant", {
     expect_error(maxquant(file = "", intensity = "LFQ", type = "foo"),
         "should be one of")
     
-    file <- "data/maxquant_test_file.xlsx"
+    file <- "maxquant_test_file.xlsx"
     se <- maxquant(file = file, type = "xlsx", intensity = "LFQ", sheet = 1)
     cols_samples <- c("sample_1_LFQ", "sample_2_LFQ", "sample_3_LFQ", 
         "sample_4_LFQ", "sample_5_LFQ")
@@ -155,7 +155,7 @@ test_that("diann", {
     expect_is(diann, "function")
     expect_error(suppressWarnings(diann(file = "")), "no lines available")
     
-    file <- "data/diann_test_file.tsv"
+    file <- "diann_test_file.tsv"
     se <- diann(file = file)
     cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", "sample_5")
     expect_equal(colnames(se), cols_samples)
@@ -197,7 +197,7 @@ test_that("spectronaut", {
     expect_is(spectronaut, "function")
     expect_error(spectronaut(file = ""), "File does not exist")
     
-    file <- "data/spectronaut_test_file.xlsx"
+    file <- "spectronaut_test_file.xlsx"
     se <- suppressWarnings(spectronaut(file = file))
     cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", "sample_5")
     expect_equal(colnames(se), cols_samples)

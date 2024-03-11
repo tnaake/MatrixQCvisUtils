@@ -20,7 +20,7 @@
 #' @param ... additional parameters given to \code{read.xlsx}
 #' 
 #' @examples
-#' file <- "data/biocrates_test_file.xlsx"
+#' file <- "biocrates_test_file.xlsx"
 #' biocrates(file = file, sheet = 1)
 #' 
 #' @usage biocrates(file, sheet, ...)
@@ -136,7 +136,7 @@ biocrates <- function(file, sheet, ...) {
 #' @param ... additional parameters given to \code{read.xlsx}
 #' 
 #' @examples
-#' file <- "data/metaboscape_test_file.xlsx"
+#' file <- "metaboscape_test_file.xlsx"
 #' metaboscape(file = file, sheet = 1)
 #' 
 #' @usage metaboscape(file, sheet, ...)
@@ -253,7 +253,7 @@ metaboscape <- function(file, sheet, ...) {
 #' (for \code{type = "tsv"}/\code{type = "txt"}) 
 #'
 #' @examples
-#' file <- "data/maxquant_test_file.xlsx"
+#' file <- "maxquant_test_file.xlsx"
 #' maxquant(file = file, intensity = "LFQ", type = "xlsx", sheet = 1)
 #'
 #' @return 
@@ -432,7 +432,7 @@ maxquant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
 #' @param ... additional parameters given to \code{read.table}
 #'
 #' @examples
-#' file <- "data/diann_test_file.tsv"
+#' file <- "diann_test_file.tsv"
 #' diann(file = file)
 #'
 #' @return 
@@ -471,7 +471,7 @@ diann <- function(file, ...) {
 #' @param ... additional parameters given to \code{read.xslx}
 #'
 #' @examples
-#' file <- "data/spectronaut_test_file.xlsx"
+#' file <- "spectronaut_test_file.xlsx"
 #' spectronaut(file = file, sheetIntensities = 1, 
 #'     sheetAnnotation = 2)
 #' 
