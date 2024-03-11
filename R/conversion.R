@@ -20,8 +20,8 @@
 #' @param ... additional parameters given to \code{read.xlsx}
 #' 
 #' @examples
-#' file <- "path/to/biocrates/object"
-#' \donttest{biocrates(file = file, sheet = 1)}
+#' file <- "data/biocrates_test_file.xlsx"
+#' biocrates(file = file, sheet = 1)
 #' 
 #' @usage biocrates(file, sheet, ...)
 #'
@@ -47,12 +47,12 @@ biocrates <- function(file, sheet, ...) {
     
     ## check if Choline is the last column (this is typically the case)
     if (ncol(xls) != which(colnames(xls) == "Choline")) {
-        warning("Please check 'file': Column 'Choline' is not the last column in 'file' as expected.")
-        print("I expect that there are feature columns containing intensities beyond the column 'Choline'.")
-        print("I will select all columns until the last column and continue.")
+        print("Please check 'file': Column 'Choline' is not the last column in 'file' as expected.")
+        print("I do not expect that there are feature columns containing intensities beyond the column 'Choline'.")
+        print("I will select all columns until the column 'Choline' and continue.")
     }
     ## unncessesary step but keep it for clarity
-    xls <- xls[, seq(1, ncol(xls))]
+    xls <- xls[, seq(1, which(colnames(xls) == "Choline"))]
     
     ## find the columns that contain the metabolites, row 1 contains class,
     ## row 2 contains LOD (row 1 and 2 is NA for columns not containing the 
@@ -60,6 +60,10 @@ biocrates <- function(file, sheet, ...) {
     inds_met <- !is.na(xls[1, ])
     ## set the first TRUE value to FALSE since it contains the label of the row
     inds_met[which(inds_met)[1]] <- FALSE
+    ## set the column C0 if it exists to TRUE (for some older versions of files
+    ## this is necessary)
+    if ("C0" %in% colnames(inds_met))
+        inds_met[1, "C0"] <- TRUE
     
     ## find the rows that contain the samples
     ## find from the back the first FALSE entry, set all following TRUEs to FALSE
@@ -88,14 +92,13 @@ biocrates <- function(file, sheet, ...) {
     ## create colData
     ## rename column "Sample Identification" to "name" and move to the beginning
     ## of cD
-    name_original <- colnames(xls)
     colnames(xls) <- colnames(xls) |>
         make.names()
     cD <- xls[inds_name, seq_len(min(which(inds_met)) - 1)]
     cD_tmp <- cD
     colnames(cD_tmp) <- tolower(colnames(cD_tmp))
-    cD <- data.frame(name = cD_tmp[, "sample.identification"], 
-        name_original = name_original, cD)
+    cD <- data.frame(name = make.names(cD_tmp[, "sample.identification"]), 
+        name_original = cD_tmp[, "sample.identification"], cD)
     rownames(cD) <- cD[["name"]]
     
     ## create assay, set values of 0 to NA
@@ -133,8 +136,8 @@ biocrates <- function(file, sheet, ...) {
 #' @param ... additional parameters given to \code{read.xlsx}
 #' 
 #' @examples
-#' file <- "path/to/metaboScape/object"
-#' \donttest{metaboscape(file = file, sheet = 1)}
+#' file <- "data/metaboscape_test_file.xlsx"
+#' metaboscape(file = file, sheet = 1)
 #' 
 #' @usage metaboscape(file, sheet, ...)
 #'
@@ -250,8 +253,8 @@ metaboscape <- function(file, sheet, ...) {
 #' (for \code{type = "tsv"}/\code{type = "txt"}) 
 #'
 #' @examples
-#' file <- "path/to/maxquant/object.txt"
-#' \donttest{maxquant(file = file, intensity = "iBAQ", type = "txt")}
+#' file <- "data/maxquant_test_file.xlsx"
+#' maxquant(file = file, intensity = "LFQ", type = "xlsx", sheet = 1)
 #'
 #' @return 
 #' \code{SummarizedExperiment} object
@@ -429,8 +432,8 @@ maxquant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
 #' @param ... additional parameters given to \code{read.table}
 #'
 #' @examples
-#' file <- "path/to/diann/object.tsv"
-#' \donttest{diann(file = file)}
+#' file <- "data/diann_test_file.tsv"
+#' diann(file = file)
 #'
 #' @return 
 #' \code{SummarizedExperiment} object
@@ -468,9 +471,9 @@ diann <- function(file, ...) {
 #' @param ... additional parameters given to \code{read.xslx}
 #'
 #' @examples
-#' file <- "path/to/spectronaut/object"
-#' \donttest{spectronaut(file = file, sheetIntensitities = 1, 
-#'     sheetAnnotation = 2, ...)}
+#' file <- "data/spectronaut_test_file.xlsx"
+#' spectronaut(file = file, sheetIntensities = 1, 
+#'     sheetAnnotation = 2)
 #' 
 #' @usage spectronaut(file, sheetIntensities, sheetAnnotation, ...)
 #'
