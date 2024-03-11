@@ -50,10 +50,12 @@ send a mail to the developer.
 # Prepare the environment and load the data {#sec-prepare}
 To install `MatrixQCvisUtils` enter the following to the `R` console
 
-```{r install, eval=FALSE}
+```{r install, eval = FALSE}
 if (!requireNamespace("remotes", quietly = TRUE))
     install.packages("remotes")
-remotes::install_github("tnaake/MatrixQCvisUtils")
+
+if (!requireNamespace("MatrixQCvisUtils", quietly = TRUE))
+    remotes::install_github("tnaake/MatrixQCvisUtils")
 ```
 
 Before starting with the analysis, load the `MatrixQCvisUtils` package.
