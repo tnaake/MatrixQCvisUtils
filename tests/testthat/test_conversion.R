@@ -209,7 +209,8 @@ test_that("spectronaut", {
     
     file <- system.file("extdata", "spectronaut_test_file.xlsx", 
         package = "MatrixQCvisUtils")
-    se <- suppressWarnings(spectronaut(file = file))
+    se <- suppressWarnings(spectronaut(file = file, 
+            sheetIntensities = 1, sheetAnnotation = 2))
     cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", 
         "sample_5")
     expect_equal(colnames(se), cols_samples)
