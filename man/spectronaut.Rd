@@ -35,7 +35,8 @@ The sample names are taken from the column \code{"SAMPLE_IDs"} from the
 sheet \code{sheetAnnotation}.
 }
 \examples{
-file <- "spectronaut_test_file.xlsx"
+file <- dir(system.file("spectronaut_test_file.xlsx", package = "MatrixQCvisUtils"), full.names = TRUE)
+##file <- "spectronaut_test_file.xlsx"
 spectronaut(file = file, sheetIntensities = 1, 
     sheetAnnotation = 2)
 

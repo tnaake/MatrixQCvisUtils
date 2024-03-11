@@ -20,7 +20,8 @@
 #' @param ... additional parameters given to \code{read.xlsx}
 #' 
 #' @examples
-#' file <- "biocrates_test_file.xlsx"
+#' file <- dir(system.file("biocrates_test_file.xlsx", package = "MatrixQCvisUtils"), full.names = TRUE)
+#' ##file <- "biocrates_test_file.xlsx"
 #' biocrates(file = file, sheet = 1)
 #' 
 #' @usage biocrates(file, sheet, ...)
@@ -471,7 +472,8 @@ diann <- function(file, ...) {
 #' @param ... additional parameters given to \code{read.xslx}
 #'
 #' @examples
-#' file <- "spectronaut_test_file.xlsx"
+#' file <- dir(system.file("spectronaut_test_file.xlsx", package = "MatrixQCvisUtils"), full.names = TRUE)
+#' ##file <- "spectronaut_test_file.xlsx"
 #' spectronaut(file = file, sheetIntensities = 1, 
 #'     sheetAnnotation = 2)
 #' 

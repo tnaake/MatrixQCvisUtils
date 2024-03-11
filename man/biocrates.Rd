@@ -30,7 +30,8 @@ The column "Sample Identification" has to contain unique identifiers
 (no duplications).
 }
 \examples{
-file <- "biocrates_test_file.xlsx"
+file <- dir(system.file("biocrates_test_file.xlsx", package = "MatrixQCvisUtils"), full.names = TRUE)
+##file <- "biocrates_test_file.xlsx"
 biocrates(file = file, sheet = 1)
 
 }
