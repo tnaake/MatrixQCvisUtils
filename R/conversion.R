@@ -20,8 +20,8 @@
 #' @param ... additional parameters given to \code{read.xlsx}
 #' 
 #' @examples
-#' file <- dir(system.file("biocrates_test_file.xlsx", package = "MatrixQCvisUtils"), full.names = TRUE)
-#' ##file <- "biocrates_test_file.xlsx"
+#' file <- system.file("extdata", "biocrates_test_file.xlsx", 
+#'     package = "MatrixQCvisUtils")
 #' biocrates(file = file, sheet = 1)
 #' 
 #' @usage biocrates(file, sheet, ...)
@@ -67,7 +67,7 @@ biocrates <- function(file, sheet, ...) {
         inds_met[1, "C0"] <- TRUE
     
     ## find the rows that contain the samples
-    ## find from the back the first FALSE entry, set all following TRUEs to FALSE
+    ## find from the back the first FALSE entry, set all following TRUE to FALSE
     inds_name <- !is.na(xls[, 1])
     inds_name <- inds_name[length(inds_name):1]
     first_false <- which(!inds_name)[1]
@@ -137,7 +137,8 @@ biocrates <- function(file, sheet, ...) {
 #' @param ... additional parameters given to \code{read.xlsx}
 #' 
 #' @examples
-#' file <- "metaboscape_test_file.xlsx"
+#' file <- system.file("extdata", "metaboscape_test_file.xlsx", 
+#'     package = "MatrixQCvisUtils")
 #' metaboscape(file = file, sheet = 1)
 #' 
 #' @usage metaboscape(file, sheet, ...)
@@ -188,7 +189,8 @@ metaboscape <- function(file, sheet, ...) {
     if ("ccs..\u00E5.." %in% .cols) rD$ccs_a2 <- .xls[, "ccs..\u00E5.."] |>
         as.numeric() 
     ## UNICODE refers to delta
-    if ("\u03B4ccs...."  %in% .cols) rD$deltaccs_percent <- .xls[, "\u03B4ccs...."] |> 
+    if ("\u03B4ccs...."  %in% .cols) 
+        rD$deltaccs_percent <- .xls[, "\u03B4ccs...."] |> 
         as.numeric()
     if ("m.z.meas."  %in% .cols) rD$mz <- .xls[, "m.z.meas."] |>
         as.numeric()
@@ -248,13 +250,15 @@ metaboscape <- function(file, sheet, ...) {
 #' \code{"none"}
 #' @param sheet \code{character} or \code{numeric}, the name or index of the 
 #' sheet to read data from
-#' @param type \code{character}, either \code{"tsv"},  \code{"txt"}, or \code{"xlsx"}
+#' @param type \code{character}, either \code{"tsv"},  \code{"txt"}, or 
+#' \code{"xlsx"}
 #' @param ... additional parameters given to \code{read.xlsx} (for 
 #' \code{type = "xlsx"}) or \code{read.table}
 #' (for \code{type = "tsv"}/\code{type = "txt"}) 
 #'
 #' @examples
-#' file <- "maxquant_test_file.xlsx"
+#' file <- system.file("extdata", "maxquant_test_file.xlsx", 
+#'     package = "MatrixQCvisUtils")
 #' maxquant(file = file, intensity = "LFQ", type = "xlsx", sheet = 1)
 #'
 #' @return 
@@ -433,7 +437,8 @@ maxquant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
 #' @param ... additional parameters given to \code{read.table}
 #'
 #' @examples
-#' file <- "diann_test_file.tsv"
+#' file <- system.file("extdata", "diann_test_file.tsv", 
+#'     package = "MatrixQCvisUtils")
 #' diann(file = file)
 #'
 #' @return 
@@ -472,8 +477,8 @@ diann <- function(file, ...) {
 #' @param ... additional parameters given to \code{read.xslx}
 #'
 #' @examples
-#' file <- dir(system.file("spectronaut_test_file.xlsx", package = "MatrixQCvisUtils"), full.names = TRUE)
-#' ##file <- "spectronaut_test_file.xlsx"
+#' file <- system.file("extdata", "spectronaut_test_file.xlsx", 
+#'      package = "MatrixQCvisUtils")
 #' spectronaut(file = file, sheetIntensities = 1, 
 #'     sheetAnnotation = 2)
 #' 

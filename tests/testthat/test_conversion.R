@@ -3,10 +3,11 @@ test_that("biocrates", {
     expect_is(biocrates, "function")
     expect_error(biocrates(file = ""), "File does not exist")
     
-    file <- "biocrates_test_file.xlsx"
+    file <- system.file("extdata", "biocrates_test_file.xlsx", 
+        package = "MatrixQCvisUtils")
     se <- biocrates(file = file, sheet = 1)
-    cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", "sample_5",
-        "sample_6", "sample_7", "sample_8", "sample_9", "sample_10")
+    cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", 
+        "sample_5", "sample_6", "sample_7", "sample_8", "sample_9", "sample_10")
     expect_equal(colnames(se), cols_samples)
     expect_equal(rownames(se)[1:5], 
         c("C0", "C2", "C3", "C3.DC..C4.OH.", "C3.OH"))
@@ -17,14 +18,17 @@ test_that("biocrates", {
     expect_equal(se$name, cols_samples)
     expect_equal(se$name_original, cols_samples)
     expect_equal(se$Plate.Bar.Code, rep("plate_bar_code_1", 10))
-    expect_equal(se$Sample.Bar.Code, rep("sample_bar_code_1", 10))
-    expect_equal(se$Sample.Identification, cols_sample)
+    expect_equal(se$Sample.Bar.Code, c("sample_bar_code_1", "sample_bar_code_2",
+        "sample_bar_code_3", "sample_bar_code_4", "sample_bar_code_5", 
+        "sample_bar_code_6", "sample_bar_code_7", "sample_bar_code_8", 
+        "sample_bar_code_9", "sample_bar_code_10"))
+    expect_equal(se$Sample.Identification, cols_samples)
     expect_equal(se$Submission.Name, cols_samples)
     expect_equal(se$Species, rep("human", 10))
     expect_equal(se$Material, rep("cells", 10))
     expect_equal(se$Cell.Number, c("4000000", "4000000", "2000000", "2000000",
         "2000000", "5000000", "5000000", "5000000", "5000000", "2000000"))
-    expect_equal(se$Cell.Extraction.Volume..µl., rep(60, 10))
+    expect_equal(se$Cell.Extraction.Volume..µl., rep("60", 10))
     expect_equal(se$Org..Info, rep("human", 10))
     expect_equal(se$Measurement.Time, rep("2024.03.08", 10))
     
@@ -33,7 +37,7 @@ test_that("biocrates", {
     expect_equal(rowData(se)$feature[1:5], 
         c("C0", "C2", "C3", "C3.DC..C4.OH.", "C3.OH"))
     expect_equal(rowData(se)$feature_original[1:5], 
-                 c("C0", "C2", "C3", "C3.DC..C4.OH.", "C3.OH"))
+                 c("C0", "C2", "C3", "C3-DC (C4-OH)", "C3-OH"))
     expect_equal(rowData(se)$class[1:5], rep("Acylcarnitines", 5))
     expect_equal(unique(rowData(se)$class), c("Acylcarnitines", "Alkaloids",
         "Amine Oxides", "Aminoacids", "Aminoacids Related", "Bile Acids",
@@ -43,14 +47,15 @@ test_that("biocrates", {
         "Nucleobases Related", "Phosphatidylcholines", "Sphingomyelins",     
         "Sugars", "Triacylglycerols", "Vitamins & Cofactors"))
     expect_equal(rowData(se)$HMDB_ids[1:5], 
-        c( "HMDB0000062", "HMDB0000201", "HMDB0000824", "HMDB0002095", "HMDB0013125"))
+        c( "HMDB0000062", "HMDB0000201", "HMDB0000824", "HMDB0002095", 
+            "HMDB0013125"))
 
     ## check assay
     expect_equal(colnames(assay(se)), cols_samples)
     expect_equal(rownames(assay(se))[1:5], 
         c("C0", "C2", "C3", "C3.DC..C4.OH.", "C3.OH"))
     expect_equal(sum(is.na(assay(se))), 0)
-    expect_equal(sum(assay(se)), 360713.4)
+    expect_equal(sum(assay(se)), 360713.422, tolerance = 1e-03)
 })
 
 ## function metaboscape
@@ -58,9 +63,11 @@ test_that("metaboscape", {
     expect_is(metaboscape, "function")
     expect_error(metaboscape(file = ""), "File does not exist")
     
-    file <- "metaboscape_test_file.xlsx"
+    file <- system.file("extdata", "metaboscape_test_file.xlsx", 
+        package = "MatrixQCvisUtils")
     se <- metaboscape(file = file, sheet = 1)
-    cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", "sample_5")
+    cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", 
+        "sample_5")
     expect_equal(colnames(se), cols_samples)
     expect_equal(rownames(se)[1:5], 
         c("feature_3", "feature_4", "feature_5", "feature_6", "feature_7"))
@@ -77,15 +84,15 @@ test_that("metaboscape", {
         c("feature_3", "feature_4", "feature_5", "feature_6", "feature_7"))
     expect_equal(rowData(se)$rt_min[1:5], c(1, 2, 3, 4, 5))
     expect_equal(rowData(se)$ccs_a2[1:5], c(281, 198, 248.2, 263.8, 241.4))
-    expect_equal(rowData(se)$deltaccs_percent, rep(NA, 10))
+    expect_equal(rowData(se)$deltaccs_percent, rep(NaN, 10))
     expect_equal(rowData(se)$mz[1:5], 
-                 c())
+        c(684.5466, 608.8770, 968.7963, 1104.7707, 900.8089), tolerance = 1e-03)
     expect_equal(rowData(se)$molecular_mass[1:5], 
-                 c())
+        c(683.5393, 607.8698, 967.7890, 1103.7634, 899.8016), tolerance = 1e-03)
     expect_equal(unique(rowData(se)$ions), "[M+H]+")
     expect_equal(rowData(se)$msms, c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
-                                     FALSE, TRUE, TRUE))
-    expect_equal(unique(rowData(se)$qc_rsd_percent), NA)
+        FALSE, TRUE, TRUE))
+    expect_equal(unique(rowData(se)$qc_rsd_percent), NaN)
     
     ## check assay
     expect_equal(colnames(assay(se)), cols_samples)
@@ -110,7 +117,8 @@ test_that("maxquant", {
     expect_error(maxquant(file = "", intensity = "LFQ", type = "foo"),
         "should be one of")
     
-    file <- "maxquant_test_file.xlsx"
+    file <- system.file("extdata", "maxquant_test_file.xlsx", 
+        package = "MatrixQCvisUtils")
     se <- maxquant(file = file, type = "xlsx", intensity = "LFQ", sheet = 1)
     cols_samples <- c("sample_1_LFQ", "sample_2_LFQ", "sample_3_LFQ", 
         "sample_4_LFQ", "sample_5_LFQ")
@@ -129,16 +137,16 @@ test_that("maxquant", {
     expect_equal(rownames(rowData(se)), rownames(se))
     expect_equal(rowData(se)$feature[1:5], 
         c("protein_1", "protein_2", "protein_3", "protein_4", "protein_5"))
-    expect_equal(unique(rowData(se)$count), 3)
+    expect_equal(unique(rowData(se)$count), "3")
     expect_equal(rowData(se)$gene_name[1:5], 
         c("gene_1", "gene_2", "gene_3", "gene_4", "gene_5"))
     expect_equal(rowData(se)$majority_protein_ids[1:5], 
         c("protein_1", "protein_2", "protein_3", "protein_4", "protein_5"))
     expect_equal(rowData(se)$number_of_proteins[1:5], 
-        c(1, 1, 2, 2, 1))
+        c("1", "1", "2", "2", "1"))
     expect_equal(rowData(se)$peptides[1:5], 
-        c(1, 12, 6, 7, 5))
-    expect_equal(rowData(se)$protein_names, 
+        c("1", "12", "6", "7", "5"))
+    expect_equal(rowData(se)$protein_names[1:5], 
         c("protein_1_HUMAN", "protein_2_HUMAN", "protein_3_HUMAN", 
             "protein_4_HUMAN", "protein_5_HUMAN"))
     
@@ -155,9 +163,11 @@ test_that("diann", {
     expect_is(diann, "function")
     expect_error(suppressWarnings(diann(file = "")), "no lines available")
     
-    file <- "diann_test_file.tsv"
+    file <- system.file("extdata", "diann_test_file.tsv", 
+        package = "MatrixQCvisUtils")
     se <- diann(file = file)
-    cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", "sample_5")
+    cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", 
+        "sample_5")
     expect_equal(colnames(se), cols_samples)
     expect_equal(rownames(se)[1:5], 
         c("protein_1", "protein_2", "protein_3", "protein_4", "protein_5"))
@@ -187,7 +197,7 @@ test_that("diann", {
     ## check assay
     expect_equal(colnames(assay(se)), cols_samples)
     expect_equal(rownames(assay(se))[1:5], 
-                 c("protein_1", "protein_2", "protein_3", "protein_4", "protein_5"))
+        c("protein_1", "protein_2", "protein_3", "protein_4", "protein_5"))
     expect_equal(sum(is.na(assay(se))), 6)
     expect_equal(sum(assay(se), na.rm = TRUE), 62593)
 })
@@ -197,9 +207,11 @@ test_that("spectronaut", {
     expect_is(spectronaut, "function")
     expect_error(spectronaut(file = ""), "File does not exist")
     
-    file <- "spectronaut_test_file.xlsx"
+    file <- system.file("extdata", "spectronaut_test_file.xlsx", 
+        package = "MatrixQCvisUtils")
     se <- suppressWarnings(spectronaut(file = file))
-    cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", "sample_5")
+    cols_samples <- c("sample_1", "sample_2", "sample_3", "sample_4", 
+        "sample_5")
     expect_equal(colnames(se), cols_samples)
     expect_equal(rownames(se)[1:5], 
         c("protein_1", "protein_2", "protein_3", "protein_4", "protein_5"))
@@ -236,3 +248,4 @@ test_that("spectronaut", {
     expect_equal(sum(is.na(assay(se))), 6)
     expect_equal(sum(assay(se), na.rm = TRUE), 62593)
 })
+

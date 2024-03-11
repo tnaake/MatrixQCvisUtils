@@ -22,7 +22,8 @@ maxquant(
 \item{sheet}{\code{character} or \code{numeric}, the name or index of the 
 sheet to read data from}
 
-\item{type}{\code{character}, either \code{"tsv"},  \code{"txt"}, or \code{"xlsx"}}
+\item{type}{\code{character}, either \code{"tsv"},  \code{"txt"}, or 
+\code{"xlsx"}}
 
 \item{...}{additional parameters given to \code{read.xlsx} (for 
 \code{type = "xlsx"}) or \code{read.table}
@@ -51,7 +52,8 @@ The argument \code{type} will specify if the data is loaded from
 \code{tsv}, \code{txt}, or \code{xlsx} files.
 }
 \examples{
-file <- "maxquant_test_file.xlsx"
+file <- system.file("extdata", "maxquant_test_file.xlsx", 
+    package = "MatrixQCvisUtils")
 maxquant(file = file, intensity = "LFQ", type = "xlsx", sheet = 1)
 
 }

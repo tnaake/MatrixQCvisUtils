@@ -34,7 +34,8 @@ The function \code{diann} is a wrapper function with pre-set arguments
 information see also the help page of \code{maxquant}.
 }
 \examples{
-file <- "diann_test_file.tsv"
+file <- system.file("extdata", "diann_test_file.tsv", 
+    package = "MatrixQCvisUtils")
 diann(file = file)
 
 }

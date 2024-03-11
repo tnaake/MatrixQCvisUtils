@@ -30,7 +30,8 @@ Heuristics are run that select the sample columns based on expected
 metadata columns. Data upload may lead to insufficient results.
 }
 \examples{
-file <- "metaboscape_test_file.xlsx"
+file <- system.file("extdata", "metaboscape_test_file.xlsx", 
+    package = "MatrixQCvisUtils")
 metaboscape(file = file, sheet = 1)
 
 }
