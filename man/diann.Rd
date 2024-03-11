@@ -34,7 +34,7 @@ The function \code{diann} is a wrapper function with pre-set arguments
 information see also the help page of \code{maxquant}.
 }
 \examples{
-file <- "path/to/diann/object.tsv"
-\donttest{diann(file = file)}
+file <- "diann_test_file.tsv"
+diann(file = file)
 
 }

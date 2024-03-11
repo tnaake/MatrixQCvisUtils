@@ -51,7 +51,7 @@ The argument \code{type} will specify if the data is loaded from
 \code{tsv}, \code{txt}, or \code{xlsx} files.
 }
 \examples{
-file <- "path/to/maxquant/object.txt"
-\donttest{maxquant(file = file, intensity = "iBAQ", type = "txt")}
+file <- "maxquant_test_file.xlsx"
+maxquant(file = file, intensity = "LFQ", type = "xlsx", sheet = 1)
 
 }

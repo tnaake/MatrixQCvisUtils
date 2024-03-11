@@ -30,7 +30,7 @@ The column "Sample Identification" has to contain unique identifiers
 (no duplications).
 }
 \examples{
-file <- "path/to/biocrates/object"
-\donttest{biocrates(file = file, sheet = 1)}
+file <- "biocrates_test_file.xlsx"
+biocrates(file = file, sheet = 1)
 
 }

@@ -35,8 +35,8 @@ The sample names are taken from the column \code{"SAMPLE_IDs"} from the
 sheet \code{sheetAnnotation}.
 }
 \examples{
-file <- "path/to/spectronaut/object"
-\donttest{spectronaut(file = file, sheetIntensitities = 1, 
-    sheetAnnotation = 2, ...)}
+file <- "spectronaut_test_file.xlsx"
+spectronaut(file = file, sheetIntensities = 1, 
+    sheetAnnotation = 2)
 
 }
