@@ -17,7 +17,8 @@ Depends:
 	SummarizedExperiment (>= 1.20.0)
 Imports:
 	dplyr (>= 1.0.5),
-	openxlsx (>= 4.2.3)
+	openxlsx (>= 4.2.3),
+	utils (>= 4.4.0)
 Suggests:
 	BiocGenerics (>= 0.37.4),
 	BiocStyle (>= 2.19.2),

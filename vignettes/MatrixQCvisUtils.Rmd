@@ -50,7 +50,7 @@ send a mail to the developer.
 # Prepare the environment and load the data {#sec-prepare}
 To install `MatrixQCvisUtils` enter the following to the `R` console
 
-```{r install, eval=TRUE}
+```{r install, eval=FALSE}
 if (!requireNamespace("remotes", quietly = TRUE))
     install.packages("remotes")
 remotes::install_github("tnaake/MatrixQCvisUtils")
@@ -92,7 +92,7 @@ features will be accessed from `colnames(se)` and `rownames(se)`, respectively.
 
 ## Conversion from Biocrates files
 
-```{r biocrates, eval=TRUE}
+```{r biocrates, eval = TRUE}
 file <- system.file("extdata", "biocrates_test_file.xlsx", 
     package = "MatrixQCvisUtils")
 se <- biocrates(file = file, sheet = 1)
@@ -102,7 +102,7 @@ se <- biocrates(file = file, sheet = 1)
 
 ```{r}
 file <- system.file("extdata", "metaboscape_test_file.xlsx", 
-        package = "MatrixQCvisUtils")
+    package = "MatrixQCvisUtils")
 se <- metaboscape(file = file, sheet = 1)
 ```
 
