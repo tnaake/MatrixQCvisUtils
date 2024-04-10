@@ -100,14 +100,14 @@ biocrates <- function(file, sheet, ...) {
     colnames(cD_tmp) <- tolower(colnames(cD_tmp))
     cD <- data.frame(name = make.names(cD_tmp[, "sample.identification"]), 
         name_original = cD_tmp[, "sample.identification"], cD)
-    rownames(cD) <- cD[["name"]]
+    rownames(cD) <- make.unique(cD[["name"]])
     
     ## create assay, set values of 0 to NA
     a <- xls[inds_name, inds_met]
     a <- as.matrix(a)
     mode(a) <- "numeric"
     a[a == 0] <- NA
-    rownames(a) <- cD[["name"]]
+    rownames(a) <- make.unique(cD[["name"]])
 
     ## create SummarizedExperiment and return
     SummarizedExperiment::SummarizedExperiment(assays = t(a), 
