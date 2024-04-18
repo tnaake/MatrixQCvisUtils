@@ -52,7 +52,7 @@ biocrates <- function(file, sheet, ...) {
         print("I do not expect that there are feature columns containing intensities beyond the column 'Choline'.")
         print("I will select all columns until the column 'Choline' and continue.")
     }
-    ## unncessesary step but keep it for clarity
+    ## potential unncessesary step but keep it for clarity
     xls <- xls[, seq(1, which(colnames(xls) == "Choline"))]
     
     ## find the columns that contain the metabolites, row 1 contains class,
@@ -65,6 +65,14 @@ biocrates <- function(file, sheet, ...) {
     ## this is necessary)
     if ("C0" %in% colnames(inds_met))
         inds_met[1, "C0"] <- TRUE
+    ## do some additional manual checks for some of the colnames (set to FALSE)
+    cols_tmp <- colnames(inds_met) |>
+        make.names() |>
+        tolower()
+    inds_met[cols_tmp %in% c("plate.bar.code", "sample.bar.code", "sample.type", 
+        "sample.identification", "sample.description", "species", "material",
+        "op", "org..info", "plate.note", "well.position", "sample.volume",
+        "measurement.time")] <- FALSE
     
     ## find the rows that contain the samples
     ## find from the back the first FALSE entry, set all following TRUE to FALSE
