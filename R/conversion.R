@@ -72,7 +72,8 @@ biocrates <- function(file, sheet, ...) {
     inds_met[cols_tmp %in% c("plate.bar.code", "sample.bar.code", "sample.type", 
         "sample.identification", "sample.description", "species", "material",
         "op", "org..info", "plate.note", "well.position", "sample.volume",
-        "measurement.time")] <- FALSE
+        "tissue.type", "measurement.time")] <- FALSE
+    inds_met[grep(cols_tmp, pattern = "sample.id")] <- FALSE
     
     ## find the rows that contain the samples
     ## find from the back the first FALSE entry, set all following TRUE to FALSE
@@ -106,9 +107,15 @@ biocrates <- function(file, sheet, ...) {
     cD <- xls[inds_name, seq_len(min(which(inds_met)) - 1)]
     cD_tmp <- cD
     colnames(cD_tmp) <- tolower(colnames(cD_tmp))
+    
+    ## obtain column with ids, first try column sample.identifcation, if not 
+    ## present in data take the column with pattern "id"
+    cols_id <- "sample.identification"
+    if (!(cols_id %in% colnames(cD_tmp)))
+        cols_id <- grep(colnames(cD_tmp), pattern = "id", value = TRUE)[1]
     cD <- data.frame(
-        name = make.unique(make.names(cD_tmp[, "sample.identification"])), 
-        name_original = cD_tmp[, "sample.identification"], cD)
+        name = make.unique(make.names(cD_tmp[, cols_id])), 
+        name_original = cD_tmp[, cols_id], cD)
     rownames(cD) <- cD[["name"]]
     
     ## create assay, set values of 0 to NA
