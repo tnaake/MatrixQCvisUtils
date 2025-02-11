@@ -513,7 +513,12 @@ spectronaut <- function(file, sheetIntensities = 1, sheetAnnotation = 2, ...) {
     cD <- openxlsx::read.xlsx(file, sheet = sheetAnnotation, ...)
     
     ## get the name of the samples
-    samps <- cD[, "Sample_IDs"]
+    ## obtain column with ids, first try column Sample_IDs, if not 
+    ## present in data take the column with pattern "file.name"
+    cols_id <- "Sample_IDs"
+    if (!(cols_id) %in% colnames(cD))
+        cols_id <- grep(colnames(cD), pattern = "file[.]name", value = TRUE)[1]
+    samps <- cD[, cols_id]
     samps <- make.names(samps)
     
     ## names of proteins is in the first col, assign and remove the first col
@@ -541,7 +546,7 @@ spectronaut <- function(file, sheetIntensities = 1, sheetAnnotation = 2, ...) {
     rownames(rD) <- rD[["feature"]]
 
     ## create colData
-    colnames(cD)[colnames(cD) == "Sample_IDs"] <- "name"
+    colnames(cD)[colnames(cD) == cols_id] <- "name"
     cD$name <- make.names(samps)
     cD$name_original <- samps
     rownames(cD) <- cD[["name"]]
