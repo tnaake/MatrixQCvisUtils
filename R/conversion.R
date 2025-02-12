@@ -320,8 +320,10 @@ maxquant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
     } 
     if (intensity == "none") {
         cols_rD <- c("best.ms.ms", "charges", "count", "evidence.ids",
-            "fasta.headers", "first.protein.description", "genes", "gene.names", 
-            "id", "length", "majority.protein.ids", "mass", "missed.cleavages",
+            "fasta.headers", "first.protein.description", 
+            "peptide.counts.(all)", "peptide.counts.(razor+unique)",
+            "peptide.counts..unique.", "genes", "gene.names", "id",
+            "length", "majority.protein.ids", "mass", "missed.cleavages",
             "mod..peptide.ids", "mol..weight..kda.", "ms.ms.ids",
             "number.of.proteins", "only.identified.by.site", 
             "oxidation..m..site.ids", "oxidation..m..site.positions",
@@ -348,6 +350,18 @@ maxquant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
     if ("fasta.headers" %in% .cols) rD$fasta_header <- .f[, "fasta.headers"]
     if ("first.protein.description" %in% .cols) 
         rD$first_protein_description <- .f[, "first.protein.description"]
+    if ("peptide.counts.(all)" %in% .cols)
+        rD$peptide_counts_all <- .f[, "peptide.counts.(all)"]
+    if ("peptide.counts..all." %in% .cols)
+        rD$peptide_counts_all <- .f[, "peptide.counts..all."]
+    if ("peptide.counts.(razor+unique)" %in% .cols)
+        rD$peptide_counts_razor_unique <- .f[, "peptide.counts.(razor+unique)"]
+    if ("peptide.counts..razor.unique." %in% .cols)
+        rD$peptide_counts_razor_unique <- .f[, "peptide.counts..razor.unique."]
+    if ("peptide.counts.(unique)" %in% .cols)
+        rD$peptide_counts_unique <- .f[, "peptide.counts.(unique)"]
+    if ("peptide.counts..unique." %in% .cols)
+        rD$peptide_counts_unique <- .f[, "peptide.counts..unique."]
     if ("genes" %in% .cols) rD$genes <- .f[, "genes"]
     if ("gene.names" %in% .cols) rD$gene_name <- .f[, "gene.names"]
     if ("id" %in% .cols) rD$id <- .f[, "id"]
@@ -370,12 +384,6 @@ maxquant <- function(file, intensity = c("iBAQ", "LFQ", "none"), sheet,
         rD$oxidation_m_site_ids <- .f[, "oxidation..m..site.ids"]
     if ("oxidation..m..site.positions" %in% .cols)
         rD$oxidation_m_site_positions <- .f[, "oxidation..m..site.positions"]
-    if ("peptide.counts..all." %in% .cols)
-        rD$peptide_counts_all <- .f[, "peptide.counts..all."]
-    if ("peptide.counts..razor.unique." %in% .cols)
-        rD$peptide_counts_razor_unique <- .f[, "peptide.counts..razor.unique."]
-    if ("peptide.counts..unique." %in% .cols)
-        rD$peptide_counts_unique <- .f[, "peptide.counts..unique."]
     if ("peptides"  %in% .cols) rD$peptides <- .f[, "peptides"]
     if ("peptide.ids" %in% .cols) rD$peptide_ids <- .f[, "peptide.ids"]
     if ("peptide.is.razor" %in% .cols)
